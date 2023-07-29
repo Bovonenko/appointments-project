@@ -1,14 +1,15 @@
 import React, { createContext, useEffect, useReducer } from "react";
-import reducer, { IInitialState } from "./reducer";
+import reducer, { IAppointmentsState } from "./reducer";
 import useAppointmentService from "../../services/AppointmentService";
 import { ActionTypes } from "./actions";
 
-const initialState: IInitialState = {
+const initialState: IAppointmentsState = {
 	allAppointments: [],
 	activeAppointments: [],
+	appointmentsLoadingStatus: "idle",
 };
 
-interface AppointmentsContextValue extends IInitialState {
+interface AppointmentsContextValue extends IAppointmentsState {
 	getAllActiveAppointments: () => void;
 	getAllAppointments: () => void;
 }
@@ -20,6 +21,7 @@ interface ProviderProps {
 export const AppointmentsContext = createContext<AppointmentsContextValue>({
 	allAppointments: initialState.allAppointments,
 	activeAppointments: initialState.activeAppointments,
+	appointmentsLoadingStatus: initialState.appointmentsLoadingStatus,
 	getAllActiveAppointments: () => {},
 	getAllAppointments: () => {},
 });
@@ -32,6 +34,7 @@ const AppointmentsContextProvider = ({ children }: ProviderProps) => {
 	const value: AppointmentsContextValue = {
 		allAppointments: state.allAppointments,
 		activeAppointments: state.activeAppointments,
+		appointmentsLoadingStatus: loadingStatus,
 		getAllAppointments: () => {
 			getAllAppointments().then((res) => {
 				dispatch({

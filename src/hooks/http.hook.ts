@@ -1,5 +1,6 @@
 import { useState, useCallback } from "react";
 
+export type LoadingStatusOptions = "idle" | "loading" | "error";
 type HTTPRequestMethods = "GET" | "POST" | "PATCH" | "DELETE";
 interface HTTPHeaders {
 	[key: string]: string;
@@ -14,7 +15,8 @@ interface RequestConfig {
 }
 
 export const useHttp = () => {
-	const [loadingStatus, setLoadingStatus] = useState<string>("idle");
+	const [loadingStatus, setLoadingStatus] =
+		useState<LoadingStatusOptions>("idle");
 
 	const request = useCallback(
 		async ({
