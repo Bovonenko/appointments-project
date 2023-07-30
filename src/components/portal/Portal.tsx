@@ -9,7 +9,6 @@ interface PortalProps {
 function createWrapperAndAppendToBody(wrapperId: string) {
 	const wrapperElement = document.createElement("div");
 	wrapperElement.id = wrapperId;
-	wrapperElement.classList.add("modal");
 	document.body.append(wrapperElement);
 
 	return wrapperElement;
