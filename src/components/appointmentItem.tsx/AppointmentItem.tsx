@@ -7,6 +7,7 @@ import "./appointmentItem.scss";
 
 type AppointmentProps = Optional<IAppointment, "canceled"> & {
 	openModal: (id: number) => void;
+	getAllActiveAppointments?: () => void;
 };
 
 const AppointmentItem = memo(
@@ -18,6 +19,7 @@ const AppointmentItem = memo(
 		date,
 		canceled,
 		openModal,
+		getAllActiveAppointments,
 	}: AppointmentProps) => {
 		const [timeLeft, changeTimeLeft] = useState<string | null>(null);
 
@@ -29,11 +31,18 @@ const AppointmentItem = memo(
 			);
 
 			const intervalId = setInterval(() => {
-				changeTimeLeft(
-					`${dayjs(date).diff(undefined, "h")}:${
-						dayjs(date).diff(undefined, "m") % 60
-					}`
-				);
+				if (dayjs(date).diff(undefined, "m") <= 0) {
+					if (getAllActiveAppointments) {
+						getAllActiveAppointments();
+					}
+					clearInterval(intervalId);
+				} else {
+					changeTimeLeft(
+						`${dayjs(date).diff(undefined, "h")}:${
+							dayjs(date).diff(undefined, "m") % 60
+						}`
+					);
+				}
 			}, 60000);
 			return () => {
 				clearInterval(intervalId);

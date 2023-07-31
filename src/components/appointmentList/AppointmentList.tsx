@@ -15,7 +15,7 @@ function AppointmentList() {
 	} = useContext(AppointmentsContext);
 
 	const [isOpen, setIsOpen] = useState(false);
-	const [selectedId, selectId] = useState<number | null>(null);
+	const [selectedId, selectId] = useState<number>(0);
 
 	useEffect(() => {
 		getAllActiveAppointments();
@@ -49,6 +49,7 @@ function AppointmentList() {
 					<AppointmentItem
 						{...item}
 						openModal={handleOpenModal}
+						getAllActiveAppointments={getAllActiveAppointments}
 						key={item.id}
 					/>
 				);

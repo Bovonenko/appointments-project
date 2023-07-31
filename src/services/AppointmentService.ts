@@ -49,7 +49,20 @@ const useAppointmentService = () => {
 		return transformed;
 	};
 
-	return { loadingStatus, getAllAppointments, getAllActiveAppointments };
+	const cancelAppointment = async (id: number): Promise<IAppointment> => {
+		return await request({
+			url: `${_apiBase}/${id}`,
+			method: "PATCH",
+			body: JSON.stringify({ canceled: true }),
+		});
+	};
+
+	return {
+		loadingStatus,
+		getAllAppointments,
+		getAllActiveAppointments,
+		cancelAppointment,
+	};
 };
 
 export default useAppointmentService;

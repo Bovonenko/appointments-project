@@ -1,28 +1,64 @@
 import Portal from "../portal/Portal";
-import { useRef, useEffect } from "react";
+
+import { useRef, useEffect, useState, useContext } from "react";
 import { CSSTransition } from "react-transition-group";
+
+import useAppointmentService from "../../services/AppointmentService";
+import { AppointmentsContext } from "../../context/appointments/AppointmentsContext";
+
 import "./modal.scss";
 
 interface IModalProps {
-	selectedId: number | null;
-	handleClose: (state: boolean) => void;
+	selectedId: number;
 	isOpen: boolean;
+	handleClose: (state: boolean) => void;
 }
 
 function CancelModal({ handleClose, selectedId, isOpen }: IModalProps) {
 	const nodeRef = useRef<HTMLDivElement>(null);
+	const cancelStatusRef = useRef<boolean | null>(null);
+
+	const { cancelAppointment } = useAppointmentService();
+	const { getAllActiveAppointments } = useContext(AppointmentsContext);
+
+	const [btnDisabled, setBtnDisabled] = useState<boolean>(false);
+	const [cancelStatus, setCancelStatus] = useState<boolean | null>(null);
+
+	const handleCancelAppointment = (id: number) => {
+		setBtnDisabled(true);
+		cancelAppointment(id)
+			.then(() => {
+				setCancelStatus(true);
+			})
+			.catch(() => {
+				setCancelStatus(false);
+				setBtnDisabled(false);
+			});
+	};
 
 	const onEscClose = (e: KeyboardEvent) => {
 		if (e.key === "Escape") {
-			handleClose(false);
+			closeModal();
 		}
 	};
+
+	const closeModal = () => {
+		handleClose(false);
+		if (cancelStatus || cancelStatusRef.current) {
+			getAllActiveAppointments();
+		}
+	};
+
+	useEffect(() => {
+		cancelStatusRef.current = cancelStatus;
+	}, [cancelStatus]);
+
 	useEffect(() => {
 		window.addEventListener("keydown", onEscClose);
 		return () => {
 			window.removeEventListener("keydown", onEscClose);
 		};
-	}, [handleClose]);
+	}, [handleClose, cancelStatus]);
 
 	return (
 		<Portal>
@@ -41,7 +77,7 @@ function CancelModal({ handleClose, selectedId, isOpen }: IModalProps) {
 							e.target instanceof HTMLElement &&
 							e.target.classList.contains("modal")
 						) {
-							handleClose(false);
+							closeModal();
 						}
 					}}
 				>
@@ -51,17 +87,29 @@ function CancelModal({ handleClose, selectedId, isOpen }: IModalProps) {
 							{selectedId}
 						</span>
 						<div className="modal__btns">
-							<button className="modal__ok">Ok</button>
+							<button
+								className="modal__ok"
+								disabled={btnDisabled}
+								onClick={() =>
+									handleCancelAppointment(selectedId)
+								}
+							>
+								Ok
+							</button>
 							<button
 								className="modal__close"
-								onClick={() => {
-									handleClose(false);
-								}}
+								onClick={() => closeModal()}
 							>
 								Close
 							</button>
 						</div>
-						<div className="modal__status">Success</div>
+						<div className="modal__status">
+							{cancelStatus === null
+								? ""
+								: cancelStatus
+								? "Success"
+								: "Error, pls try again"}
+						</div>
 					</div>
 				</div>
 			</CSSTransition>
