@@ -41,16 +41,21 @@ function HistoryList() {
 
 	return (
 		<>
-			{allAppointments.map((item) => {
-				return (
-					<AppointmentItem
-						openModal={handleOpenModal}
-						displayTimeLeft={false}
-						{...item}
-						key={item.id}
-					/>
-				);
-			})}
+			{allAppointments
+				.sort(
+					(a, b) =>
+						new Date(b.date).getTime() - new Date(a.date).getTime()
+				)
+				.map((item) => {
+					return (
+						<AppointmentItem
+							openModal={handleOpenModal}
+							displayTimeLeft={false}
+							{...item}
+							key={item.id}
+						/>
+					);
+				})}
 			<CancelModal
 				isOpen={isOpen}
 				selectedId={selectedId}
