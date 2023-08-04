@@ -19,7 +19,8 @@ function CancelModal({ handleClose, selectedId, isOpen }: IModalProps) {
 	const cancelStatusRef = useRef<boolean | null>(null);
 
 	const { cancelAppointment } = useAppointmentService();
-	const { getAllActiveAppointments } = useContext(AppointmentsContext);
+	const { getAllActiveAppointments, getAllAppointments } =
+		useContext(AppointmentsContext);
 
 	const [btnDisabled, setBtnDisabled] = useState<boolean>(false);
 	const [cancelStatus, setCancelStatus] = useState<boolean | null>(null);
@@ -46,6 +47,7 @@ function CancelModal({ handleClose, selectedId, isOpen }: IModalProps) {
 		handleClose(false);
 		if (cancelStatus || cancelStatusRef.current) {
 			getAllActiveAppointments();
+			getAllAppointments();
 		}
 	};
 
@@ -58,7 +60,7 @@ function CancelModal({ handleClose, selectedId, isOpen }: IModalProps) {
 		return () => {
 			window.removeEventListener("keydown", onEscClose);
 		};
-	}, [handleClose, cancelStatus]);
+	}, [handleClose]);
 
 	return (
 		<Portal>

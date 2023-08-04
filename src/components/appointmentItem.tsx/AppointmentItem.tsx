@@ -8,6 +8,7 @@ import "./appointmentItem.scss";
 type AppointmentProps = Optional<IAppointment, "canceled"> & {
 	openModal: (id: number) => void;
 	getAllActiveAppointments?: () => void;
+	displayTimeLeft?: boolean;
 };
 
 const AppointmentItem = memo(
@@ -20,15 +21,18 @@ const AppointmentItem = memo(
 		canceled,
 		openModal,
 		getAllActiveAppointments,
+		displayTimeLeft = true,
 	}: AppointmentProps) => {
 		const [timeLeft, changeTimeLeft] = useState<string | null>(null);
 
 		useEffect(() => {
-			changeTimeLeft(
-				`${dayjs(date).diff(undefined, "h")}:${
-					dayjs(date).diff(undefined, "m") % 60
-				}`
-			);
+			if (dayjs(date).diff(undefined, "m") >= 0) {
+				changeTimeLeft(
+					`${dayjs(date).diff(undefined, "h")}:${
+						dayjs(date).diff(undefined, "m") % 60
+					}`
+				);
+			}
 
 			const intervalId = setInterval(() => {
 				if (dayjs(date).diff(undefined, "m") <= 0) {
@@ -62,14 +66,16 @@ const AppointmentItem = memo(
 					</span>
 					<span className="appointment__phone">Phone: {phone}</span>
 				</div>
-				{!canceled ? (
+				{!canceled && timeLeft ? (
 					<>
-						<div className="appointment__time">
-							<span>Time left:</span>
-							<span className="appointment__timer">
-								{timeLeft}
-							</span>
-						</div>
+						{displayTimeLeft ? (
+							<div className="appointment__time">
+								<span>Time left:</span>
+								<span className="appointment__timer">
+									{timeLeft}
+								</span>
+							</div>
+						) : null}
 						<button
 							className="appointment__cancel"
 							onClick={() => {
