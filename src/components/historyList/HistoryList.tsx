@@ -7,12 +7,17 @@ import { useCallback, useContext, useEffect, useState } from "react";
 import { AppointmentsContext } from "../../context/appointments/AppointmentsContext";
 
 function HistoryList() {
-	const { appointmentsLoadingStatus, allAppointments, getAllAppointments } =
-		useContext(AppointmentsContext);
+	const {
+		appointmentsLoadingStatus,
+		allAppointments,
+		getAllAppointments,
+		calendarDate,
+		setDateAndFilter,
+	} = useContext(AppointmentsContext);
 
 	const [isOpen, setIsOpen] = useState<boolean>(false);
 	const [selectedId, selectId] = useState<number>(0);
-
+	const isDateSelected = Array.isArray(calendarDate) && calendarDate[0];
 	const handleOpenModal = useCallback((id: number) => {
 		setIsOpen(true);
 		selectId(id);
@@ -20,6 +25,10 @@ function HistoryList() {
 
 	useEffect(() => {
 		getAllAppointments();
+	}, [calendarDate]);
+
+	useEffect(() => {
+		setDateAndFilter([null, null]);
 	}, []);
 
 	switch (appointmentsLoadingStatus) {
@@ -38,7 +47,8 @@ function HistoryList() {
 				</>
 			);
 	}
-
+	if (allAppointments.length === 0 && isDateSelected)
+		return <h2>No appointments for the selected date</h2>;
 	return (
 		<>
 			{allAppointments

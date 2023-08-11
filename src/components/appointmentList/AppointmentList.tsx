@@ -12,10 +12,13 @@ function AppointmentList() {
 		activeAppointments,
 		getAllActiveAppointments,
 		appointmentsLoadingStatus,
+		calendarDate,
+		setDateAndFilter,
 	} = useContext(AppointmentsContext);
 
 	const [isOpen, setIsOpen] = useState(false);
 	const [selectedId, selectId] = useState<number>(0);
+	const isDateSelected = Array.isArray(calendarDate) && calendarDate[0];
 
 	const handleOpenModal = useCallback((id: number) => {
 		setIsOpen(true);
@@ -24,6 +27,10 @@ function AppointmentList() {
 
 	useEffect(() => {
 		getAllActiveAppointments();
+	}, [calendarDate]);
+
+	useEffect(() => {
+		setDateAndFilter([null, null]);
 	}, []);
 
 	switch (appointmentsLoadingStatus) {
@@ -42,6 +49,8 @@ function AppointmentList() {
 				</>
 			);
 	}
+	if (activeAppointments.length === 0 && isDateSelected)
+		return <h2>No appointments for the selected date</h2>;
 	return (
 		<>
 			{activeAppointments.map((item) => {

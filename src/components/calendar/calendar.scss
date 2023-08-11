@@ -3,4 +3,27 @@
 	height: 272px;
 	background-color: #fff;
 	box-shadow: 5px 5px 20px rgba(0, 0, 0, 0.25);
+	.react-calendar__tile--active {
+		background: #ebbbab;
+		&:enabled:hover {
+			background: #ebbbab;
+		}
+		&:enabled:focus {
+			background: #ebbbab;
+		}
+	}
+	&__reset {
+		display: block;
+		margin: 0 auto;
+		width: 40%;
+		margin-top: 7px;
+		background: #fff;
+		border: 1px solid #ebbbab;
+		box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.25);
+		padding: 5px;
+		color: rgba(0, 0, 0, 0.7);
+		font-weight: 600;
+		font-size: 12px;
+		line-height: 15px;
+	}
 }
